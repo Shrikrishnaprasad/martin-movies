@@ -13,7 +13,7 @@ const Provider = (props) => {
   var requestOptions = {
     method: "GET",
     headers: myHeaders,
-    redirect: "follow"
+    redirect: "follow",
   };
 
   const [watchedList, setWatchedList] = useState({});
@@ -23,10 +23,12 @@ const Provider = (props) => {
   const [yearMovieList, setYearMovieList] = useState([]);
   const [filterMode, setFilterMode] = useState("All");
   const [filterType, setFilterType] = useState("All");
+  const [filterLanguage, setFilterLanguage] = useState("All");
   const [keyWord, setKeyWord] = useState("");
   const [searchList, setSearchList] = useState([]);
   const [allList, setAllList] = useState([]);
   const [addWatched, setAddWatched] = useState(null);
+  const [languageList, setLanguageList] = useState([]);
   const [isAlert, setIsAlert] = useState(false);
   const getByYear = () => {
     setLoading(true);
@@ -38,6 +40,19 @@ const Provider = (props) => {
       .then((response) => response.text())
       .then((result) => {
         setYearMovieList(JSON.parse(result));
+        setLoading(false);
+      })
+      .catch((error) => console.log("error", error));
+  };
+  const getByLanguage = () => {
+    setLoading(true);
+    fetch(
+      "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&page=1&primary_release_year=2023&sort_by=primary_release_date.desc&with_original_language=ta",
+      requestOptions
+    )
+      .then((response) => response.text())
+      .then((result) => {
+        setLanguageList(JSON.parse(result));
         setLoading(false);
       })
       .catch((error) => console.log("error", error));
@@ -71,7 +86,7 @@ const Provider = (props) => {
   const getWatched = () => {
     setLoading(true);
     fetch(
-      "https://api.themoviedb.org/3/account/10722831/watchlist/movies?language=en-US&page=1&sort_by=created_at.asc",
+      "https://api.themoviedb.org/3/account/10722831/watchlist/movies?language=en-US&page=1&sort_by=created_at.desc",
       requestOptions
     )
       .then((response) => response.text())
@@ -87,14 +102,14 @@ const Provider = (props) => {
     const payload = {
       media_type: "movie",
       media_id: id,
-      watchlist: true
+      watchlist: true,
     };
 
     fetch(url, {
       method: "POST",
       headers: myHeaders,
       body: JSON.stringify(payload),
-      redirect: "follow"
+      redirect: "follow",
     })
       .then((response) => response.text())
       .then((result) => {
@@ -116,6 +131,13 @@ const Provider = (props) => {
     }
   }, [filterYear, filterMode]);
   useEffect(() => {
+    if (filterLanguage === "Tamil" && filterMode === "Lang") {
+      getByLanguage();
+      setFilterType("");
+      setKeyWord("");
+    }
+  }, [filterLanguage, filterMode]);
+  useEffect(() => {
     if (keyWord !== "" && filterMode === "Search") {
       setTimeout(() => {
         getByKeyWord(keyWord);
@@ -132,6 +154,10 @@ const Provider = (props) => {
       addToWatchList(addWatched);
     }
   }, [addWatched]);
+  useEffect(() => {
+    if (filterMode === "All") setFilterLanguage("All");
+    else setFilterLanguage("");
+  }, [filterMode]);
   return (
     <Context.Provider
       value={{
@@ -155,7 +181,10 @@ const Provider = (props) => {
         setFilterType,
         setAddWatched,
         isAlert,
-        setIsAlert
+        setIsAlert,
+        filterLanguage,
+        setFilterLanguage,
+        languageList,
       }}
     >
       {props.children}

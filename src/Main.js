@@ -32,7 +32,8 @@ export default function Main() {
     filterMode,
     searchList,
     allList,
-    setAddWatched
+    languageList,
+    setAddWatched,
   } = React.useContext(Context);
   const [movieData, setMovieData] = React.useState([]);
   const [isLoad, setIsLoad] = React.useState(loading);
@@ -53,13 +54,25 @@ export default function Main() {
       Object.keys(searchList).length !== 0
     ) {
       handleMovieList(searchList?.results);
+    } else if (
+      filterMode === "Lang" &&
+      Object.keys(languageList).length !== 0
+    ) {
+      handleMovieList(languageList?.results);
     } else if (filterMode === "All" && Object.keys(allList).length !== 0) {
       handleMovieList(allList?.results);
     } else {
       setMovieData(cardData);
       setIsLoad(true);
     }
-  }, [searchList, yearMovieList, filterMode, allList, watchedList]);
+  }, [
+    searchList,
+    yearMovieList,
+    filterMode,
+    allList,
+    watchedList,
+    languageList,
+  ]);
   React.useEffect(() => {
     loading && setIsLoad(true);
   }, [loading]);
@@ -87,7 +100,7 @@ export default function Main() {
                     height: "100%",
                     display: "flex",
                     flexDirection: isList ? "row" : "column",
-                    cursor: "pointer"
+                    cursor: "pointer",
                     //backgroundColor: isLoad ? "" : "#212121",
                     //opacity: 0.9
                   }}
@@ -99,7 +112,7 @@ export default function Main() {
                       component="div"
                       sx={{
                         width: isList ? "70%" : "100%",
-                        pt: isList ? "24%" : "114%"
+                        pt: isList ? "24%" : "114%",
                       }}
                       image={imgURL + card.poster_path || defaultImg}
                     />
@@ -121,7 +134,7 @@ export default function Main() {
                         sx={{
                           color: "#a1a1a1",
                           display: "flex",
-                          justifyContent: "space-between"
+                          justifyContent: "space-between",
                         }}
                       >
                         <div>
@@ -143,7 +156,16 @@ export default function Main() {
                       <Typography mt={2}>
                         {watchedList?.results?.filter((e) => e.id === card.id)
                           .length ? (
-                          ""
+                          filterMode === "Watched" && (
+                            <Button
+                              size="medium"
+                              color="secondary"
+                              variant="contained"
+                              onClick={() => setAddWatched(card?.id)}
+                            >
+                              Remove
+                            </Button>
+                          )
                         ) : (
                           <Button
                             size="medium"

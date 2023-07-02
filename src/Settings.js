@@ -9,6 +9,7 @@ import Button from "@mui/material/Button";
 
 import { Context } from "./Provider";
 import React from "react";
+import FilterLang from "./FilterLang";
 
 export default function Main() {
   const { isList, setIsList } = React.useContext(Context);
@@ -16,7 +17,7 @@ export default function Main() {
     <Box
       sx={{
         bgcolor: "background.paper",
-        pt: 4
+        pt: 4,
       }}
     >
       <Container maxWidth="lg">
@@ -46,6 +47,7 @@ export default function Main() {
           <div>
             <FilterType />
             <FilterYear />
+            <FilterLang />
           </div>
         </Stack>
       </Container>
