@@ -9,7 +9,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 export default function CustomizedSnackbars() {
-  const { isAlert, setIsAlert } = React.useContext(Context);
+  const { isAlert, setIsAlert, isRemove } = React.useContext(Context);
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -21,8 +21,12 @@ export default function CustomizedSnackbars() {
   return (
     <Stack spacing={2} sx={{ width: "100%" }}>
       <Snackbar open={isAlert} autoHideDuration={4000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
-          Your Movie is added to Watched List!
+        <Alert
+          onClose={handleClose}
+          severity={isRemove ? "info" : "success"}
+          sx={{ width: "100%" }}
+        >
+          Your Movie is {isRemove ? "removed from" : "added to"} Watched List!
         </Alert>
       </Snackbar>
     </Stack>

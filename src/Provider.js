@@ -30,6 +30,7 @@ const Provider = (props) => {
   const [addWatched, setAddWatched] = useState(null);
   const [languageList, setLanguageList] = useState([]);
   const [isAlert, setIsAlert] = useState(false);
+  const [isRemove, setIsRemove] = useState(false);
   const getByYear = () => {
     setLoading(true);
     fetch(
@@ -102,7 +103,7 @@ const Provider = (props) => {
     const payload = {
       media_type: "movie",
       media_id: id,
-      watchlist: true,
+      watchlist: !isRemove,
     };
 
     fetch(url, {
@@ -112,7 +113,7 @@ const Provider = (props) => {
       redirect: "follow",
     })
       .then((response) => response.text())
-      .then((result) => {
+      .then(() => {
         setIsAlert(true);
         setAddWatched(null);
         getWatched();
@@ -147,10 +148,7 @@ const Provider = (props) => {
     }
   }, [keyWord, filterMode]);
   useEffect(() => {
-    if (
-      addWatched &&
-      !watchedList?.results?.filter((e) => e.id === addWatched).length
-    ) {
+    if (addWatched) {
       addToWatchList(addWatched);
     }
   }, [addWatched]);
@@ -185,6 +183,8 @@ const Provider = (props) => {
         filterLanguage,
         setFilterLanguage,
         languageList,
+        isRemove,
+        setIsRemove,
       }}
     >
       {props.children}

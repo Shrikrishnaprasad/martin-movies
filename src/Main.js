@@ -34,12 +34,17 @@ export default function Main() {
     allList,
     languageList,
     setAddWatched,
+    setIsRemove,
   } = React.useContext(Context);
   const [movieData, setMovieData] = React.useState([]);
   const [isLoad, setIsLoad] = React.useState(loading);
   const handleMovieList = (data) => {
     setMovieData(data);
     setIsLoad(false);
+  };
+  const handleIsRemove = (id, remove) => {
+    setIsRemove(remove);
+    setAddWatched(id);
   };
   React.useEffect(() => {
     if (filterMode === "Watched" && Object.keys(watchedList).length !== 0) {
@@ -76,7 +81,6 @@ export default function Main() {
   React.useEffect(() => {
     loading && setIsLoad(true);
   }, [loading]);
-  console.log(watchedList);
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -161,7 +165,7 @@ export default function Main() {
                               size="medium"
                               color="secondary"
                               variant="contained"
-                              onClick={() => setAddWatched(card?.id)}
+                              onClick={() => handleIsRemove(card?.id, true)}
                             >
                               Remove
                             </Button>
@@ -171,7 +175,7 @@ export default function Main() {
                             size="medium"
                             color="secondary"
                             variant="contained"
-                            onClick={() => setAddWatched(card?.id)}
+                            onClick={() => handleIsRemove(card?.id, false)}
                           >
                             Add to Watched
                           </Button>
